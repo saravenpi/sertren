@@ -60,8 +60,8 @@ tmux source-file ~/.tmux.conf
 | Key | Action | Description |
 |-----|--------|-------------|
 | `prefix + o` | Session Switcher | Open the intelligent session switcher |
-| `prefix + r` | Rename Session | Rename the current session |
-| `prefix + R` | Rename Window | Rename the current window |
+| `prefix + r` | Rename Window | Rename the current window |
+| `prefix + R` | Rename Session | Rename the current session |
 | `prefix + x` | Kill Pane (confirm) | Kill current pane with confirmation |
 | `prefix + X` | Kill Session (confirm) | Kill current session with confirmation |
 
@@ -72,8 +72,8 @@ You can customize key bindings by setting these options in your `~/.tmux.conf`:
 ```bash
 # Session management
 set -g @sertren_session_switcher_key 'o'
-set -g @sertren_session_rename_key 'r'
-set -g @sertren_window_rename_key 'R'
+set -g @sertren_session_rename_key 'R'
+set -g @sertren_window_rename_key 'r'
 
 # Safety features
 set -g @sertren_kill_pane_key 'x'
@@ -94,13 +94,17 @@ Press `prefix + o` to open the session switcher. You can:
 
 ### Renaming
 
-- **Sessions**: `prefix + r` - Opens input field with current session name
-- **Windows**: `prefix + R` - Opens input field with current window name
+- **Windows**: `prefix + r` - Opens input field with current window name
+- **Sessions**: `prefix + R` - Opens input field with current session name
+
+**Note**: Press `Ctrl+C` or `Escape` to cancel any rename operation.
 
 ### Safety Features
 
 - **Kill Pane**: `prefix + x` - Asks for confirmation before killing current pane
 - **Kill Session**: `prefix + X` - Asks for confirmation before killing current session
+
+**Note**: Press `Ctrl+C` or `Escape` to cancel any confirmation dialog.
 
 ## Integration with Other Tools
 

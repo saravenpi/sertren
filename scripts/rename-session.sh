@@ -7,6 +7,10 @@ current_name=$(tmux display-message -p '#S')
 tmux popup -w 50% -h 20% -T " Rename Session " -E "
     printf 'Session name [$current_name]: '
     read -r name
+    # Check if user pressed Ctrl+C (escape equivalent)
+    if [ \$? -ne 0 ]; then
+        exit 0
+    fi
     if [ -z \"\$name\" ]; then
         name=\"$current_name\"
     fi

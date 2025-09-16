@@ -4,8 +4,8 @@ CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Default key bindings
 default_session_switcher_key="o"
-default_session_rename_key="r"
-default_window_rename_key="R"
+default_session_rename_key="R"
+default_window_rename_key="r"
 default_kill_pane_key="x"
 default_kill_session_key="X"
 
