@@ -52,8 +52,10 @@ tmux source-file ~/.tmux.conf
 
 ### Optional (with graceful fallbacks)
 - **zoxide** - For intelligent path detection when creating new sessions
-- **gum** - For enhanced UI elements (confirmation dialogs, input fields)
+- **gum** - For enhanced UI elements (beautiful confirmation dialogs and input fields with better UX)
 - **egg** - For automatic tmux layout application
+
+**Note**: When gum is installed, Sertren will automatically use it for all rename and confirmation dialogs, providing a much better user experience with proper styling and navigation. If gum is not available, it gracefully falls back to tmux popups.
 
 ## Default Key Bindings
 
@@ -97,14 +99,18 @@ Press `prefix + o` to open the session switcher. You can:
 - **Windows**: `prefix + r` - Opens input field with current window name
 - **Sessions**: `prefix + R` - Opens input field with current session name
 
-**Note**: Press `Ctrl+C` or `Escape` to cancel any rename operation.
+**Interface**: If `gum` is installed, provides beautiful styled input fields with tab completion and proper cursor navigation. Otherwise falls back to tmux popup dialogs.
+
+**Cancellation**: Press `Ctrl+C` or `Escape` to cancel any rename operation.
 
 ### Safety Features
 
 - **Kill Pane**: `prefix + x` - Asks for confirmation before killing current pane
 - **Kill Session**: `prefix + X` - Asks for confirmation before killing current session
 
-**Note**: Press `Ctrl+C` or `Escape` to cancel any confirmation dialog.
+**Interface**: If `gum` is installed, provides beautiful styled confirmation dialogs with clear Yes/No options and proper keyboard navigation. Otherwise falls back to tmux popup dialogs.
+
+**Cancellation**: Press `Ctrl+C`, `Escape`, or select "No" to cancel any destructive operation.
 
 ## Integration with Other Tools
 
@@ -118,7 +124,14 @@ When creating new sessions, Sertren intelligently uses zoxide to find project di
 If `egg.yml` exists in a project directory, Sertren automatically runs `egg --current` when creating a new session to apply your predefined tmux layout.
 
 ### Gum
-When available, Sertren uses gum for enhanced UI elements. If not installed, it falls back to tmux popup-based interfaces.
+When available, Sertren automatically detects and uses gum for all interactive elements:
+- **Rename dialogs**: Beautiful input fields with proper styling and cursor navigation
+- **Confirmation dialogs**: Clear Yes/No prompts with keyboard shortcuts
+- **Better UX**: Proper escape handling, visual feedback, and intuitive controls
+
+If gum is not installed, Sertren gracefully falls back to tmux popup-based interfaces that work in all environments.
+
+**Installation**: Install gum with `brew install gum` (macOS) or visit [gum's repository](https://github.com/charmbracelet/gum) for other platforms.
 
 ## File Structure
 

@@ -1,16 +1,24 @@
 #!/bin/bash
 
-# Always use tmux popup for reliable operation from key bindings
-tmux popup -w 40% -h 20% -T " Confirm " -E "
-    printf 'Kill this session? [y/N] '
-    read -r answer
-    # Check if user pressed Ctrl+C (escape equivalent)
-    if [ \$? -ne 0 ]; then
-        exit 0
+# Use gum if available, otherwise fallback to tmux popup
+if command -v gum >/dev/null 2>&1 && [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ] || [ -n "$TERM_PROGRAM" ]; then
+    # Use gum for better UX when available and in a proper terminal context
+    if gum confirm "Kill this session?" 2>/dev/null; then
+        tmux kill-session
     fi
-    case \"\$answer\" in
-        [Yy]|[Yy][Ee][Ss])
-            tmux kill-session
-            ;;
-    esac
-"
+else
+    # Fallback to tmux popup for reliable operation from key bindings
+    tmux popup -w 40% -h 20% -T " Confirm " -E "
+        printf 'Kill this session? [y/N] '
+        read -r answer
+        # Check if user pressed Ctrl+C (escape equivalent)
+        if [ \$? -ne 0 ]; then
+            exit 0
+        fi
+        case \"\$answer\" in
+            [Yy]|[Yy][Ee][Ss])
+                tmux kill-session
+                ;;
+        esac
+    "
+fi
