@@ -4,7 +4,7 @@
 if command -v gum >/dev/null 2>&1; then
     # Run gum inside tmux popup for proper terminal context
     tmux popup -w 40% -h 20% -T " Confirm " -E "
-        if gum confirm 'Kill this session?'; then
+        if gum confirm --no-show-help 'Kill this session?'; then
             tmux kill-session
         fi
     "

@@ -7,7 +7,7 @@ current_name=$(tmux display-message -p '#W')
 if command -v gum >/dev/null 2>&1; then
     # Run gum inside tmux popup for proper terminal context
     tmux popup -w 50% -h 20% -T " Rename Window " -E "
-        name=\$(gum input --placeholder 'New window name' --prompt 'Window > ' --value '$current_name')
+        name=\$(gum input --no-show-help --placeholder 'New window name' --prompt 'Window > ' --value '$current_name')
         if [ \$? -eq 0 ] && [ -n \"\$name\" ]; then
             tmux rename-window \"\$name\"
         fi
