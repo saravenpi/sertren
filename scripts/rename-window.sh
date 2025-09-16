@@ -6,7 +6,7 @@ current_name=$(tmux display-message -p '#W')
 # Use gum if available, otherwise fallback to basic tmux popup
 if command -v gum >/dev/null 2>&1; then
     # Run gum inside tmux popup for proper terminal context
-    tmux popup -w 50% -h 20% -T " Rename Window " -E "
+    tmux popup -w 40 -h 3 -T " Rename Window " -E "
         name=\$(gum input --no-show-help --placeholder 'New window name' --prompt 'Window > ' --value '$current_name')
         if [ \$? -eq 0 ] && [ -n \"\$name\" ]; then
             tmux rename-window \"\$name\"
@@ -14,7 +14,7 @@ if command -v gum >/dev/null 2>&1; then
     "
 else
     # Fallback to basic tmux popup
-    tmux popup -w 50% -h 20% -T " Rename Window " -E "
+    tmux popup -w 40 -h 3 -T " Rename Window " -E "
         printf 'Window name [$current_name]: '
         read -r name
         # Check if user pressed Ctrl+C (escape equivalent)
