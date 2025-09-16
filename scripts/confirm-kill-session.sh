@@ -1,13 +1,15 @@
 #!/bin/bash
 
-# Use gum if available, otherwise fallback to tmux popup
-if command -v gum >/dev/null 2>&1 && [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ] || [ -n "$TERM_PROGRAM" ]; then
-    # Use gum for better UX when available and in a proper terminal context
-    if gum confirm "Kill this session?" 2>/dev/null; then
-        tmux kill-session
-    fi
+# Use gum if available, otherwise fallback to basic tmux popup
+if command -v gum >/dev/null 2>&1; then
+    # Run gum inside tmux popup for proper terminal context
+    tmux popup -w 40% -h 20% -T " Confirm " -E "
+        if gum confirm 'Kill this session?'; then
+            tmux kill-session
+        fi
+    "
 else
-    # Fallback to tmux popup for reliable operation from key bindings
+    # Fallback to basic tmux popup
     tmux popup -w 40% -h 20% -T " Confirm " -E "
         printf 'Kill this session? [y/N] '
         read -r answer
