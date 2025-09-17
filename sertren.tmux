@@ -24,6 +24,7 @@ kill_session_key=${kill_session_key:-$default_kill_session_key}
 
 # Set up key bindings
 tmux bind-key $session_switcher_key run-shell "$CURRENT_DIR/scripts/session-switcher.sh"
+tmux bind-key s run-shell "$CURRENT_DIR/scripts/session-switcher.sh"
 tmux bind-key $session_rename_key run-shell "$CURRENT_DIR/scripts/rename-session.sh"
 tmux bind-key $window_rename_key run-shell "$CURRENT_DIR/scripts/rename-window.sh"
 tmux bind-key $kill_pane_key run-shell "$CURRENT_DIR/scripts/confirm-kill-pane.sh"
