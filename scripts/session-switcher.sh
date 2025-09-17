@@ -37,7 +37,7 @@ tmux_session_switcher() {
         [ -f ~/.zshrc ] && source ~/.zshrc >/dev/null 2>&1
 
         fzf_result=\$(cat '$temp_file' | fzf \
-            --prompt='Session: ' \
+            --prompt='Session > ' \
             --height=100% \
             --layout=default \
             --no-sort \
