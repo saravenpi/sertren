@@ -44,7 +44,7 @@ tmux_session_switcher() {
             -i \
             --print-query \
             --bind='tab:accept,esc:abort,enter:accept' \
-            --color='border:#A4AF46,header:#C59C86,prompt:#C8D062')
+            --color='border:#7A9048,header:#6b4423,prompt:#7A9048')
 
         # Handle fzf result - if there are 2 lines, use the second (selection)
         # If there's only 1 line, use it as the query (typed input)
