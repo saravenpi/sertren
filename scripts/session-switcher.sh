@@ -27,89 +27,92 @@ tmux_session_switcher() {
         all_options=("$current_session (current)" "${all_options[@]}")
     fi
 
-    # Write options to a temp file
-    local temp_file="/tmp/tmux-session-options-$$"
-    printf '%s\n' "${all_options[@]}" > "$temp_file"
+    # Build session list display (with numbers for easy selection)
+    local display_message="Sessions:\n"
+    local i=1
+    for session in "${all_options[@]}"; do
+        display_message+="$i) $session\n"
+        ((i++))
+    done
+    display_message+="\nSelect session number or type new session name:"
 
-    # Use fzf in popup and capture result
-    tmux popup -w 40% -h 40% -T " Sertren " -E "
-        # Source shell configuration to ensure zoxide is available
-        [ -f ~/.zshrc ] && source ~/.zshrc >/dev/null 2>&1
-
-        fzf_result=\$(cat '$temp_file' | fzf \
-            --prompt='Session > ' \
-            --height=100% \
-            --layout=default \
-            --no-sort \
-            -i \
-            --print-query \
-            --bind='tab:accept,esc:abort,enter:accept' \
-            --color='border:#7A9048,header:#6b4423,prompt:#7A9048')
-
-        # Handle fzf result - if there are 2 lines, use the second (selection)
-        # If there's only 1 line, use it as the query (typed input)
-        if [ \$(echo \"\$fzf_result\" | wc -l) -eq 2 ]; then
-            selection=\$(echo \"\$fzf_result\" | tail -1)
-        else
-            selection=\$(echo \"\$fzf_result\" | head -1)
-        fi
-
-        # Clean up temp file
-        rm -f '$temp_file'
-
-        # If selection was made, switch to it
-        if [ -n \"\$selection\" ]; then
-            # Handle current session selection
-            if [[ \"\$selection\" == *\"(current)\" ]]; then
-                exit 0
-            fi
-
-            # Clean the selection (remove suffixes and trim spaces)
-            session_name=\$(echo \"\$selection\" | sed 's/ (current)$//' | xargs)
-
-            # Check if it's an existing session
-            if tmux has-session -t \"\$session_name\" 2>/dev/null; then
-                tmux switch-client -t \"\$session_name\"
-                exit 0
-            fi
-
-            # If selection doesn't exist, treat as new session name
-            # Try to get path from zoxide
-            project_path=\$(zoxide query \"\$session_name\" 2>/dev/null)
-
-            # If no exact match, try listing all and grep for partial matches
-            if [ -z \"\$project_path\" ]; then
-                project_path=\$(zoxide query --list | grep -i \"\$session_name\" | head -1)
-            fi
-
-            # If still no match, check if it's a valid directory path or use current directory
-            if [ -z \"\$project_path\" ]; then
-                # Check if session_name is a valid directory path
-                if [ -d \"\$session_name\" ]; then
-                    project_path=\$(cd \"\$session_name\" && pwd)
-                    zoxide add \"\$project_path\" 2>/dev/null
-                else
-                    # Fallback to home directory
-                    project_path=\"\$HOME\"
-                fi
-            fi
-
-            # Create new session with the determined path
-            # Ensure we have a valid directory
-            if [ ! -d \"\$project_path\" ]; then
-                project_path=\"\$HOME\"
-            fi
-
-            # Create the new session
-            tmux new-session -d -s \"\$session_name\" -c \"\$project_path\"
-            tmux switch-client -t \"\$session_name\"
-
-            # Apply the tmux layout with egg --current if egg.yml exists
-            if [ -f \"\$project_path/egg.yml\" ]; then
-                tmux send-keys -t \"\$session_name\" 'egg --current' Enter
-            fi
-        fi
+    # Show available sessions in a popup
+    tmux display-popup -w 60% -h 60% -T " Sertren " -E "
+        echo '${display_message}'
+        read -p 'Session > ' response
+        echo \"\$response\" > /tmp/sertren-session-$$
     "
+
+    # Read the response
+    local response=$(cat /tmp/sertren-session-$$ 2>/dev/null)
+    rm -f /tmp/sertren-session-$$
+
+    # Exit if no selection
+    if [ -z "$response" ]; then
+        exit 0
+    fi
+
+    # Check if response is a number (selecting from list)
+    if [[ "$response" =~ ^[0-9]+$ ]]; then
+        local index=$((response - 1))
+        if [ $index -ge 0 ] && [ $index -lt ${#all_options[@]} ]; then
+            local selection="${all_options[$index]}"
+
+            # Handle current session selection
+            if [[ "$selection" == *"(current)" ]]; then
+                exit 0
+            fi
+
+            # Clean the selection and switch
+            session_name=$(echo "$selection" | sed 's/ (current)$//' | xargs)
+            if tmux has-session -t "$session_name" 2>/dev/null; then
+                tmux switch-client -t "$session_name"
+                exit 0
+            fi
+        fi
+        exit 0
+    fi
+
+    # Treat response as new session name
+    session_name="$response"
+
+    # Check if it's an existing session first
+    if tmux has-session -t "$session_name" 2>/dev/null; then
+        tmux switch-client -t "$session_name"
+        exit 0
+    fi
+
+    # Try to get path from zoxide
+    project_path=$(zoxide query "$session_name" 2>/dev/null)
+
+    # If no exact match, try listing all and grep for partial matches
+    if [ -z "$project_path" ]; then
+        project_path=$(zoxide query --list | grep -i "$session_name" | head -1)
+    fi
+
+    # If still no match, check if it's a valid directory path or use current directory
+    if [ -z "$project_path" ]; then
+        if [ -d "$session_name" ]; then
+            project_path=$(cd "$session_name" && pwd)
+            zoxide add "$project_path" 2>/dev/null
+        else
+            project_path="$HOME"
+        fi
+    fi
+
+    # Ensure we have a valid directory
+    if [ ! -d "$project_path" ]; then
+        project_path="$HOME"
+    fi
+
+    # Create the new session
+    tmux new-session -d -s "$session_name" -c "$project_path"
+    tmux switch-client -t "$session_name"
+
+    # Apply the tmux layout with egg --current if egg.yml exists
+    if [ -f "$project_path/egg.yml" ]; then
+        tmux send-keys -t "$session_name" 'egg --current' Enter
+    fi
 }
 
 # Run the function
