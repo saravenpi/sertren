@@ -2,14 +2,12 @@
 
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Default key bindings
 default_session_switcher_key="o"
 default_session_rename_key="R"
 default_window_rename_key="r"
 default_kill_pane_key="x"
 default_kill_session_key="X"
 
-# Get key bindings from tmux options or use defaults
 session_switcher_key=$(tmux show-option -gqv @sertren_session_switcher_key)
 session_rename_key=$(tmux show-option -gqv @sertren_session_rename_key)
 window_rename_key=$(tmux show-option -gqv @sertren_window_rename_key)
@@ -22,7 +20,6 @@ window_rename_key=${window_rename_key:-$default_window_rename_key}
 kill_pane_key=${kill_pane_key:-$default_kill_pane_key}
 kill_session_key=${kill_session_key:-$default_kill_session_key}
 
-# Set up key bindings
 tmux bind-key $session_switcher_key run-shell "$CURRENT_DIR/scripts/session-switcher.sh"
 tmux bind-key s run-shell "$CURRENT_DIR/scripts/session-switcher.sh"
 tmux bind-key $session_rename_key run-shell "$CURRENT_DIR/scripts/rename-session.sh"
