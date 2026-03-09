@@ -1,21 +1,20 @@
 #!/bin/bash
 
-get_sessions() {
-    tmux list-sessions -F "#{session_last_attached} #{session_name}" 2>/dev/null | \
-        sort -rn | cut -d' ' -f2-
-}
-
 current_session=$(tmux display-message -p '#S' 2>/dev/null)
 
 selected=$(
     tmux display-popup -w 60% -h 60% -E "
+        sessions=\$(tmux list-sessions -F '#{session_last_attached} #{session_name}' 2>/dev/null | sort -rn | cut -d' ' -f2-)
+
         {
-            echo '$current_session'
-            tmux list-sessions -F '#{session_last_attached} #{session_name}' 2>/dev/null | \
-                sort -rn | cut -d' ' -f2- | grep -v '^$current_session\$'
-            echo ''
+            if [ -n '$current_session' ]; then
+                echo '$current_session'
+            fi
+
+            echo \"\$sessions\" | grep -v '^$current_session\$'
+
             echo '[new session]'
-        } | fzf --prompt='Session > ' --reverse
+        } | grep -v '^$' | fzf --prompt='Session > ' --reverse
     "
 )
 
