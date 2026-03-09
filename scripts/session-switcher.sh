@@ -8,12 +8,15 @@ get_sessions() {
 current_session=$(tmux display-message -p '#S' 2>/dev/null)
 
 selected=$(
-    {
-        echo "$current_session"
-        get_sessions | grep -v "^$current_session$"
-        echo ""
-        echo "[new session]"
-    } | fzf --prompt="Session > " --height=40% --reverse --no-preview
+    tmux display-popup -w 60% -h 60% -E "
+        {
+            echo '$current_session'
+            tmux list-sessions -F '#{session_last_attached} #{session_name}' 2>/dev/null | \
+                sort -rn | cut -d' ' -f2- | grep -v '^$current_session\$'
+            echo ''
+            echo '[new session]'
+        } | fzf --prompt='Session > ' --reverse
+    "
 )
 
 [ -z "$selected" ] && exit 0
