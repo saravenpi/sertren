@@ -27,6 +27,6 @@ tmux bind-key $session_switcher_key run-shell "$CURRENT_DIR/scripts/session-swit
 tmux bind-key s run-shell "$CURRENT_DIR/scripts/session-switcher.sh"
 tmux bind-key $session_rename_key run-shell "$CURRENT_DIR/scripts/rename-session.sh"
 tmux bind-key $window_rename_key run-shell "$CURRENT_DIR/scripts/rename-window.sh"
-tmux bind-key $kill_pane_key confirm-before -p "Kill this pane? (Y/n)" kill-pane
-tmux bind-key $kill_window_key confirm-before -p "Kill this window? (Y/n)" kill-window
-tmux bind-key $kill_session_key confirm-before -p "Kill this session? (Y/n)" kill-session
+tmux bind-key $kill_pane_key confirm-before -y -p "Kill this pane? (Y/n)" kill-pane
+tmux bind-key $kill_window_key confirm-before -y -p "Kill this window? (Y/n)" kill-window
+tmux bind-key $kill_session_key confirm-before -y -p "Kill this session? (Y/n)" kill-session
