@@ -59,7 +59,8 @@ tmux source-file ~/.tmux.conf
 | `prefix + r` | Rename Window |
 | `prefix + R` | Rename Session |
 | `prefix + x` | Kill Pane (with confirmation) |
-| `prefix + X` | Kill Session (with confirmation) |
+| `prefix + X` | Kill Window (with confirmation) |
+| `prefix + Q` | Kill Session (with confirmation) |
 
 ## Configuration
 
@@ -70,7 +71,8 @@ set -g @sertren_session_switcher_key 'o'
 set -g @sertren_session_rename_key 'R'
 set -g @sertren_window_rename_key 'r'
 set -g @sertren_kill_pane_key 'x'
-set -g @sertren_kill_session_key 'X'
+set -g @sertren_kill_window_key 'X'
+set -g @sertren_kill_session_key 'Q'
 ```
 
 ## Usage
@@ -94,7 +96,8 @@ Press `Ctrl+C` or `Escape` to cancel.
 ### Safety Features
 
 - **Kill Pane**: `prefix + x` - Asks for confirmation
-- **Kill Session**: `prefix + X` - Asks for confirmation
+- **Kill Window**: `prefix + X` - Asks for confirmation
+- **Kill Session**: `prefix + Q` - Asks for confirmation
 
 ## Integration
 
